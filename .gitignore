@@ -1,0 +1,35 @@
+# --- Secrets / personal config ---
+config.yaml
+.env
+.env.*
+*.key
+*.pem
+
+# --- Generated data (scraped from third parties; keep local) ---
+agriturismi*.csv
+agriturismi_it_*.csv
+merged_*.csv
+map_*.html
+
+# --- Personal working files ---
+*.xlsx
+.~lock.*
+
+# --- Python ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

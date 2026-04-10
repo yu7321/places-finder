@@ -1,0 +1,41 @@
+# Specialty coffee shops in Berlin — example Places Finder config.
+#
+# Use-case: weekend city trip, want to find the good cafés without the
+# ones that just serve burned espresso. Tighter radius than the wineries
+# example because it's an urban search.
+
+google_api_key: "YOUR_GOOGLE_PLACES_API_KEY_HERE"
+
+profile:
+  name: "coffee"
+  label: "specialty coffee shops"
+
+default_location: "Berlin Mitte, Germany"
+default_radius_km: 6
+language_code: "en"
+
+search_queries:
+  - "specialty coffee"
+  - "third wave coffee"
+  - "single origin coffee"
+  - "espresso bar"
+  - "pour over coffee"
+  - "roastery"
+  - "Kaffeerösterei"        # German: coffee roastery
+
+# Filter out generic chains and places that only accidentally matched a
+# query. The name/type of a real specialty spot will almost always include
+# one of these tokens in English or German.
+require_keywords:
+  - "coffee"
+  - "cafe"
+  - "café"
+  - "kaffee"
+  - "espresso"
+  - "roaster"
+  - "rösterei"
+
+output:
+  csv_path: "coffee.csv"
+  encoding: "utf-8"
+  max_reviews_per_place: 5

@@ -1,0 +1,79 @@
+# -----------------------------------------------------------------------------
+# Places Finder configuration template (agriturismo example).
+#
+# Copy this file to `config.yaml` and fill in your Google Places API key.
+# `config.yaml` is gitignored. You can also set the API key via the
+# GOOGLE_API_KEY environment variable, which overrides the value here.
+#
+# How to get a Google Places API key:
+#   1. Go to https://console.cloud.google.com/
+#   2. Create or select a project.
+#   3. Enable the "Places API (New)" under APIs & Services > Library.
+#   4. Create an API key under APIs & Services > Credentials.
+#   5. Restrict it to the Places API for safety.
+#
+# This file is the "agriturismo" example. To retarget the pipeline at a
+# different category of place, change the `profile`, `search_queries`, and
+# `require_keywords` sections. See `examples/` for ready-to-use alternative
+# configs (wineries, specialty coffee, etc.).
+# -----------------------------------------------------------------------------
+
+google_api_key: "YOUR_GOOGLE_PLACES_API_KEY_HERE"
+
+# -----------------------------------------------------------------------------
+# Profile
+# -----------------------------------------------------------------------------
+# Identifies what category of place this config is tuned for. Used in log
+# messages and as the default CSV filename stem.
+profile:
+  name: "agriturismo"           # short identifier; used in filenames
+  label: "agriturismi"          # human-readable plural; used in log messages
+
+# -----------------------------------------------------------------------------
+# Search parameters
+# -----------------------------------------------------------------------------
+
+# Default search location (overridable via --location).
+default_location: "Chianti, Tuscany, Italy"
+
+# Default search radius in km (overridable via --radius).
+default_radius_km: 30
+
+# Language code passed to the Places API. Influences the language of review
+# text and formatted addresses returned by Google. Use "it" for Italian,
+# "de" for German, "en" for English, etc.
+language_code: "it"
+
+# Text queries used to find places. Multiple queries help coverage because
+# Google Places doesn't always have a clean single category for what you
+# want — a mix of phrasings (and languages, when relevant) improves recall.
+search_queries:
+  - "agriturismo"
+  - "agriturismo farm stay"
+  - "agriturismo bed and breakfast"
+  - "agriturismo con camere"
+  - "agriturismo con piscina"
+  - "azienda agricola agriturismo"
+  - "masseria agriturismo"
+
+# Only keep results whose name or Google-assigned types contain one of these
+# tokens (case-insensitive). Filters out generic hotels that happen to match
+# a query. Leave empty (or omit) to keep every result without filtering.
+#
+# Note: Google's official place type for Italian farm stays is "farmstay"
+# (one word, no space), so that token is the most reliable signal — many
+# real agriturismi don't have the word "agriturismo" in their displayed name.
+require_keywords:
+  - "farmstay"
+  - "agriturismo"
+  - "agritourism"
+  - "farm stay"
+  - "fattoria"
+
+# -----------------------------------------------------------------------------
+# Output settings
+# -----------------------------------------------------------------------------
+output:
+  csv_path: "agriturismi.csv"   # default stem; filenames are auto-timestamped
+  encoding: "utf-8"
+  max_reviews_per_place: 5

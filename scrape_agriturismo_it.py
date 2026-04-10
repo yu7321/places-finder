@@ -1,0 +1,103 @@
+#!/usr/bin/env python3
+"""
+Scrape de.agriturismo.it for agriturismi in a region/province.
+
+Usage:
+    python scrape_agriturismo_it.py
+    python scrape_agriturismo_it.py --region apulien --province lecce
+    python scrape_agriturismo_it.py --center 40.27,17.92 --radius 15
+    python scrape_agriturismo_it.py --province lecce --center 40.27,17.92 --radius 15
+
+Outputs a CSV with the same schema as `main.py` so the result drops straight
+into `merge.py` and `map.py`.
+"""
+
+import argparse
+import sys
+from datetime import datetime
+
+from src.agriturismo_it import scrape, AgriturismoItError
+from src.csv_writer import write_csv
+from src.email_scraper import EmailScraper
+from src.models import Place
+
+
+def parse_center(s: str) -> tuple[float, float]:
+    try:
+        lat_s, lng_s = s.split(",")
+        return float(lat_s.strip()), float(lng_s.strip())
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"--center must be 'lat,lng', got {s!r}"
+        )
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Scrape de.agriturismo.it")
+    parser.add_argument("--region", default="apulien",
+                        help="Region slug (default: apulien)")
+    parser.add_argument("--province", default="lecce",
+                        help="Province slug, or empty string for whole region")
+    parser.add_argument("--center", type=parse_center,
+                        help="Optional 'lat,lng' for distance + radius filter")
+    parser.add_argument("--radius", type=float,
+                        help="Radius in km from --center (requires --center)")
+    parser.add_argument("--delay", type=float, default=0.7,
+                        help="Seconds between detail-page fetches")
+    parser.add_argument("--skip-emails", action="store_true",
+                        help="Don't run the email scraper on the result rows")
+    parser.add_argument("--output", help="Output CSV path")
+    args = parser.parse_args()
+
+    if args.radius is not None and args.center is None:
+        print("Error: --radius requires --center")
+        sys.exit(2)
+
+    province = args.province or None
+
+    try:
+        rows: list[Place] = list(
+            scrape(
+                region=args.region,
+                province=province,
+                center=args.center,
+                radius_km=args.radius,
+                delay=args.delay,
+            )
+        )
+    except AgriturismoItError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
+    if not rows:
+        print("\nNo rows scraped.")
+        sys.exit(0)
+
+    print(f"\nParsed {len(rows)} place(s).")
+
+    # The agriturismo.it detail page does not expose owner email; the existing
+    # email scraper visits owner websites, but here `website` holds the
+    # agriturismo.it URL itself, so emails would be from the metasearch site
+    # rather than the owner. Skip by default.
+    if not args.skip_emails:
+        # Only run on rows with a non-agriturismo.it website (none, today).
+        # Future: if a `provider` link to the owner ever lands in the JSON,
+        # this can enrich those rows.
+        external = [r for r in rows if r.website and "agriturismo.it" not in r.website]
+        if external:
+            print(f"Scraping {len(external)} external website(s) for emails...")
+            EmailScraper().enrich(external)
+
+    if args.output:
+        out = args.output
+    else:
+        slug = args.province or args.region
+        ts = datetime.now().strftime("%Y%m%d-%H%M%S")
+        out = f"agriturismi_it_{slug}_{ts}.csv"
+
+    count = write_csv(out, rows)
+    print(f"Wrote {count} rows to {out}")
+
+
+if __name__ == "__main__":
+    main()

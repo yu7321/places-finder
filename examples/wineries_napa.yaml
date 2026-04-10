@@ -1,0 +1,38 @@
+# Wineries in Napa Valley — example Places Finder config.
+#
+# Copy to config.yaml (or pass via `--config examples/wineries_napa.yaml`)
+# and set your Google Places API key.
+
+google_api_key: "YOUR_GOOGLE_PLACES_API_KEY_HERE"
+
+profile:
+  name: "winery"
+  label: "wineries"
+
+default_location: "Napa Valley, California, USA"
+default_radius_km: 25
+language_code: "en"
+
+search_queries:
+  - "winery"
+  - "wine tasting room"
+  - "vineyard tour"
+  - "wine estate"
+  - "cellar door"
+  - "boutique winery"
+  - "biodynamic winery"
+
+# Google's Place type for wineries is "winery"; we also accept tasting-room
+# hits that may not carry that exact type. The `vineyard` token catches
+# standalone vineyards that also do tastings.
+require_keywords:
+  - "winery"
+  - "wineries"
+  - "vineyard"
+  - "tasting"
+  - "cellar"
+
+output:
+  csv_path: "wineries.csv"
+  encoding: "utf-8"
+  max_reviews_per_place: 5
