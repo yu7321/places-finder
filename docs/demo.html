@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_69c24b86002ce7ca4c9177e8f3e2b434 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+<div style="
+    position: fixed; bottom: 24px; left: 24px; z-index: 9999;
+    background: rgba(255,255,255,0.95); padding: 10px 12px;
+    border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    font-family: system-ui, sans-serif; font-size: 12px; line-height: 1.5;">
+  <div style="font-weight:600;margin-bottom:4px;">Rating (color)</div>
+  <div><span style="display:inline-block;width:10px;height:10px;
+       background:#72b026;border-radius:50%;margin-right:6px;"></span>4.7+</div>
+  <div><span style="display:inline-block;width:10px;height:10px;
+       background:#38aadd;border-radius:50%;margin-right:6px;"></span>4.4 – 4.6</div>
+  <div><span style="display:inline-block;width:10px;height:10px;
+       background:#f69730;border-radius:50%;margin-right:6px;"></span>below 4.4</div>
+  <div style="font-weight:600;margin-top:8px;margin-bottom:4px;">Source (icon)</div>
+  <div><i class="fa fa-leaf" style="width:14px;text-align:center;margin-right:6px;color:#555;"></i>Google Places only</div>
+  <div><i class="fa fa-home" style="width:14px;text-align:center;margin-right:6px;color:#555;"></i>agriturismo.it only</div>
+  <div><i class="fa fa-star" style="width:14px;text-align:center;margin-right:6px;color:#555;"></i>both sources</div>
+</div>
+    
+            <div class="folium-map" id="map_69c24b86002ce7ca4c9177e8f3e2b434" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_69c24b86002ce7ca4c9177e8f3e2b434 = L.map(
+                "map_69c24b86002ce7ca4c9177e8f3e2b434",
+                {
+                    center: [43.560266666666664, 11.293166666666668],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_18340d4af42954dec464e13a4e543488 = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "Tiles \u00a9 Esri \u2014 Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_18340d4af42954dec464e13a4e543488.addTo(map_69c24b86002ce7ca4c9177e8f3e2b434);
+        
+    
+            var tile_layer_662171a50047589376fa6137374a7cfa = L.tileLayer(
+                "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "Esri",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_662171a50047589376fa6137374a7cfa.addTo(map_69c24b86002ce7ca4c9177e8f3e2b434);
+        
+    
+            var tile_layer_eb5173ab57c674d912b1b661e8351b89 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_eb5173ab57c674d912b1b661e8351b89.addTo(map_69c24b86002ce7ca4c9177e8f3e2b434);
+        
+    
+            var marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75 = L.markerClusterGroup(
+                {
+}
+            );
+        
+    
+            var marker_7605f070c8c7272c02170309a8a93c35 = L.marker(
+                [43.581, 11.3165],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_0bbb84f4903d00a9e0ee2769659dc462 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_845fc32fa304ea2c1b7af63dcc1f67d3 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_fc42ec2874d27f466e928474d990d540 = $(`<div id="html_fc42ec2874d27f466e928474d990d540" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Podere del Sole</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.9 · 142 reviews · 0.2 km</div><div style="font-size:12px;margin-bottom:6px;">Via del Chianti 12, 50022 Greve in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/podere-del-sole" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0001</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0001 | IT DEMO 0001</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it; google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-08-12 · Sample reviewer · 5/5\nSynthetic review text for the Places Finder demo map — imagine a glowing review of an olive grove with a view.</div></div></div>`)[0];
+                popup_845fc32fa304ea2c1b7af63dcc1f67d3.setContent(html_fc42ec2874d27f466e928474d990d540);
+            
+        
+
+        marker_7605f070c8c7272c02170309a8a93c35.bindPopup(popup_845fc32fa304ea2c1b7af63dcc1f67d3)
+        ;
+
+        
+    
+    
+            marker_7605f070c8c7272c02170309a8a93c35.bindTooltip(
+                `<div>
+                     [DEMO] Podere del Sole
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_7605f070c8c7272c02170309a8a93c35.setIcon(icon_0bbb84f4903d00a9e0ee2769659dc462);
+            
+    
+            var marker_95f5eb1fca7d58274f6844331a04b53c = L.marker(
+                [43.5485, 11.336],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_8ff2b457a2716bc21975653e48795379 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_77288f6e9853114c2abfb1ea9d267cb0 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_ed89e642a1062e92ebf9b3efbccd794e = $(`<div id="html_ed89e642a1062e92ebf9b3efbccd794e" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Tenuta Luna Piena</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.8 · 87 reviews · 3.4 km</div><div style="font-size:12px;margin-bottom:6px;">Località Panzano 5, 50022 Greve in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/tenuta-luna" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0002</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0002 | IT DEMO 0002</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it; google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-07-03 · Demo user · 5/5\nDemonstration review text with enough body to show how the popup wraps longer sentences.</div></div></div>`)[0];
+                popup_77288f6e9853114c2abfb1ea9d267cb0.setContent(html_ed89e642a1062e92ebf9b3efbccd794e);
+            
+        
+
+        marker_95f5eb1fca7d58274f6844331a04b53c.bindPopup(popup_77288f6e9853114c2abfb1ea9d267cb0)
+        ;
+
+        
+    
+    
+            marker_95f5eb1fca7d58274f6844331a04b53c.bindTooltip(
+                `<div>
+                     [DEMO] Tenuta Luna Piena
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_95f5eb1fca7d58274f6844331a04b53c.setIcon(icon_8ff2b457a2716bc21975653e48795379);
+            
+    
+            var marker_0290537619c314354c3f13dd8984c54b = L.marker(
+                [43.542, 11.268],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_cebcbc6663c6c84164f9469f8c79dd92 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_125a2651e4d59b65f8ccaf638ce55b08 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_0b0c5cfa3ab852290cdc950a4621753b = $(`<div id="html_0b0c5cfa3ab852290cdc950a4621753b" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Cascina Verde</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.7 · 64 reviews · 6.8 km</div><div style="font-size:12px;margin-bottom:6px;">Strada Chiantigiana 44, 50028 Tavarnelle</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/cascina-verde" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0003</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0003 | IT DEMO 0003</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it; google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-06-17 · Demo user · 5/5\nRating threshold boundary example.</div></div></div>`)[0];
+                popup_125a2651e4d59b65f8ccaf638ce55b08.setContent(html_0b0c5cfa3ab852290cdc950a4621753b);
+            
+        
+
+        marker_0290537619c314354c3f13dd8984c54b.bindPopup(popup_125a2651e4d59b65f8ccaf638ce55b08)
+        ;
+
+        
+    
+    
+            marker_0290537619c314354c3f13dd8984c54b.bindTooltip(
+                `<div>
+                     [DEMO] Cascina Verde
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0290537619c314354c3f13dd8984c54b.setIcon(icon_cebcbc6663c6c84164f9469f8c79dd92);
+            
+    
+            var marker_1e62953f5b2cfcc3cdec531fe18437fa = L.marker(
+                [43.492, 11.372],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_4f40a27ce56363db16c9952fd5d25492 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_08c29b9456d379a59c2da56716e42a55 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_711534bdb5a5b6142f4d960e5ff0cf4b = $(`<div id="html_711534bdb5a5b6142f4d960e5ff0cf4b" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Villa dei Cipressi</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.5 · 38 reviews · 10.5 km</div><div style="font-size:12px;margin-bottom:6px;">Via delle Rose 9, 53017 Radda in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/cipressi" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0004</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0004</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it; google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-05-04 · Demo user · 4/5\nMid-tier rating demonstration.</div></div></div>`)[0];
+                popup_08c29b9456d379a59c2da56716e42a55.setContent(html_711534bdb5a5b6142f4d960e5ff0cf4b);
+            
+        
+
+        marker_1e62953f5b2cfcc3cdec531fe18437fa.bindPopup(popup_08c29b9456d379a59c2da56716e42a55)
+        ;
+
+        
+    
+    
+            marker_1e62953f5b2cfcc3cdec531fe18437fa.bindTooltip(
+                `<div>
+                     [DEMO] Villa dei Cipressi
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1e62953f5b2cfcc3cdec531fe18437fa.setIcon(icon_4f40a27ce56363db16c9952fd5d25492);
+            
+    
+            var marker_08b77cc380484b2a40c311c7cd3785a1 = L.marker(
+                [43.5905, 11.301],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_32eb5ccda9b9fd846be663ff8141868d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b2c2308e5b761b887d5e8203be5b2500 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_77647e110f764e7392e3a8d7768be175 = $(`<div id="html_77647e110f764e7392e3a8d7768be175" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] La Fattoria di Mezzo</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.4 · 55 reviews · 1.3 km</div><div style="font-size:12px;margin-bottom:6px;">Via della Collina 2, 50022 Greve in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/fattoria-mezzo" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0005</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0005</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it; google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-04-19 · Demo user · 4/5\nBorderline blue-tier example.</div></div></div>`)[0];
+                popup_b2c2308e5b761b887d5e8203be5b2500.setContent(html_77647e110f764e7392e3a8d7768be175);
+            
+        
+
+        marker_08b77cc380484b2a40c311c7cd3785a1.bindPopup(popup_b2c2308e5b761b887d5e8203be5b2500)
+        ;
+
+        
+    
+    
+            marker_08b77cc380484b2a40c311c7cd3785a1.bindTooltip(
+                `<div>
+                     [DEMO] La Fattoria di Mezzo
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_08b77cc380484b2a40c311c7cd3785a1.setIcon(icon_32eb5ccda9b9fd846be663ff8141868d);
+            
+    
+            var marker_a82bc677a0770510b94e4930b06bc91f = L.marker(
+                [43.654, 11.186],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_0e4169894cba2ed7e9e20519568a45c3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "leaf",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3c5e4095d277589a5c9f0501f4e3cb60 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_3112c6eddb15ea623ce942aceab95696 = $(`<div id="html_3112c6eddb15ea623ce942aceab95696" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Poggio delle Rondini</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.8 · 91 reviews · 15.2 km</div><div style="font-size:12px;margin-bottom:6px;">Via Sant&#x27;Anna 7, 50020 San Casciano</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/poggio" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0006</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-03-12 · Demo user · 5/5\nGoogle-only source demonstration — leaf icon.</div></div></div>`)[0];
+                popup_3c5e4095d277589a5c9f0501f4e3cb60.setContent(html_3112c6eddb15ea623ce942aceab95696);
+            
+        
+
+        marker_a82bc677a0770510b94e4930b06bc91f.bindPopup(popup_3c5e4095d277589a5c9f0501f4e3cb60)
+        ;
+
+        
+    
+    
+            marker_a82bc677a0770510b94e4930b06bc91f.bindTooltip(
+                `<div>
+                     [DEMO] Poggio delle Rondini
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a82bc677a0770510b94e4930b06bc91f.setIcon(icon_0e4169894cba2ed7e9e20519568a45c3);
+            
+    
+            var marker_c41368bef2265f20887af9ce523ea04d = L.marker(
+                [43.471, 11.282],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_7cda2245569a5ed7ae058a1a9bb37baa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "leaf",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_299b441986f3b608e8ff98002ffe5d78 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_6afaa42a4a2321c6ce033f23dbabdbf1 = $(`<div id="html_6afaa42a4a2321c6ce033f23dbabdbf1" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Agriturismo La Quercia</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.9 · 116 reviews · 14.8 km</div><div style="font-size:12px;margin-bottom:6px;">Località Pianetto 3, 53011 Castellina</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/quercia" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0007</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-02-27 · Demo user · 5/5\nGoogle-only with high rating.</div></div></div>`)[0];
+                popup_299b441986f3b608e8ff98002ffe5d78.setContent(html_6afaa42a4a2321c6ce033f23dbabdbf1);
+            
+        
+
+        marker_c41368bef2265f20887af9ce523ea04d.bindPopup(popup_299b441986f3b608e8ff98002ffe5d78)
+        ;
+
+        
+    
+    
+            marker_c41368bef2265f20887af9ce523ea04d.bindTooltip(
+                `<div>
+                     [DEMO] Agriturismo La Quercia
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c41368bef2265f20887af9ce523ea04d.setIcon(icon_7cda2245569a5ed7ae058a1a9bb37baa);
+            
+    
+            var marker_870f4b64d7854e5973d6dfe81d99f19b = L.marker(
+                [43.572, 11.344],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_984a64837ee147a00f869763c6958e80 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "leaf",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dd8c1e3b8b1a735463d3c646918a4413 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_f643f2f529a9c4e39e3cc28d893b037d = $(`<div id="html_f643f2f529a9c4e39e3cc28d893b037d" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Casa del Vino</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.6 · 42 reviews · 1.9 km</div><div style="font-size:12px;margin-bottom:6px;">Via del Vino 18, 50022 Greve in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/casa-vino" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0008</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-01-10 · Demo user · 5/5\nGoogle-only blue-tier.</div></div></div>`)[0];
+                popup_dd8c1e3b8b1a735463d3c646918a4413.setContent(html_f643f2f529a9c4e39e3cc28d893b037d);
+            
+        
+
+        marker_870f4b64d7854e5973d6dfe81d99f19b.bindPopup(popup_dd8c1e3b8b1a735463d3c646918a4413)
+        ;
+
+        
+    
+    
+            marker_870f4b64d7854e5973d6dfe81d99f19b.bindTooltip(
+                `<div>
+                     [DEMO] Casa del Vino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_870f4b64d7854e5973d6dfe81d99f19b.setIcon(icon_984a64837ee147a00f869763c6958e80);
+            
+    
+            var marker_25a95fbba4d717464bbebf6de7bbf1b1 = L.marker(
+                [43.538, 11.235],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_ee0556a1ab0151480af32cadb0e46be0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "leaf",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_178b7160ac1ef205b23d6301095afd63 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_df0dc62a9fd9b8fef9d3fd15e14f2461 = $(`<div id="html_df0dc62a9fd9b8fef9d3fd15e14f2461" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Il Frantoio Nuovo</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.3 · 28 reviews · 9.7 km</div><div style="font-size:12px;margin-bottom:6px;">Via Vecchia del Frantoio 11, 50028 Tavarnelle</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/frantoio" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0009</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2024-12-08 · Demo user · 4/5\nBelow 4.4 — orange demo.</div></div></div>`)[0];
+                popup_178b7160ac1ef205b23d6301095afd63.setContent(html_df0dc62a9fd9b8fef9d3fd15e14f2461);
+            
+        
+
+        marker_25a95fbba4d717464bbebf6de7bbf1b1.bindPopup(popup_178b7160ac1ef205b23d6301095afd63)
+        ;
+
+        
+    
+    
+            marker_25a95fbba4d717464bbebf6de7bbf1b1.bindTooltip(
+                `<div>
+                     [DEMO] Il Frantoio Nuovo
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_25a95fbba4d717464bbebf6de7bbf1b1.setIcon(icon_ee0556a1ab0151480af32cadb0e46be0);
+            
+    
+            var marker_1c0149b354a5a91bb9c116a8ae12bb90 = L.marker(
+                [43.678, 11.25],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_a851bbe9ca2f6f36fa21f0def2542433 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "leaf",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_5e740a21699d3965fae7f861fd997f0a = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_2bff375d86b1440b1a5d2d4d763050c2 = $(`<div id="html_2bff375d86b1440b1a5d2d4d763050c2" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Tenuta Monterosso</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.7 · 73 reviews · 12.4 km</div><div style="font-size:12px;margin-bottom:6px;">Via Monte 21, 50020 Barberino</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/monterosso" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0010</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: google_places</div></div></div>`)[0];
+                popup_5e740a21699d3965fae7f861fd997f0a.setContent(html_2bff375d86b1440b1a5d2d4d763050c2);
+            
+        
+
+        marker_1c0149b354a5a91bb9c116a8ae12bb90.bindPopup(popup_5e740a21699d3965fae7f861fd997f0a)
+        ;
+
+        
+    
+    
+            marker_1c0149b354a5a91bb9c116a8ae12bb90.bindTooltip(
+                `<div>
+                     [DEMO] Tenuta Monterosso
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1c0149b354a5a91bb9c116a8ae12bb90.setIcon(icon_a851bbe9ca2f6f36fa21f0def2542433);
+            
+    
+            var marker_b208913e6b9e029298c30c8982035d9e = L.marker(
+                [43.458, 11.391],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_d61b64fbf252cbc98b043bda9b020d26 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_529884327e0f1e9bc9cfd41724218a80 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_41bacd059d426ac52fb2350642a01a2d = $(`<div id="html_41bacd059d426ac52fb2350642a01a2d" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Masseria del Ponte</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.8 · 49 reviews · 12.6 km</div><div style="font-size:12px;margin-bottom:6px;">Strada del Ponte 1, 53017 Radda</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/masseria-ponte" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0011</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0011 | IT DEMO 0011</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-09-02 · Demo user · 5/5\nagriturismo.it-only source — home icon.</div></div></div>`)[0];
+                popup_529884327e0f1e9bc9cfd41724218a80.setContent(html_41bacd059d426ac52fb2350642a01a2d);
+            
+        
+
+        marker_b208913e6b9e029298c30c8982035d9e.bindPopup(popup_529884327e0f1e9bc9cfd41724218a80)
+        ;
+
+        
+    
+    
+            marker_b208913e6b9e029298c30c8982035d9e.bindTooltip(
+                `<div>
+                     [DEMO] Masseria del Ponte
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_b208913e6b9e029298c30c8982035d9e.setIcon(icon_d61b64fbf252cbc98b043bda9b020d26);
+            
+    
+            var marker_982e6a1aec210425af5479cfa405c92d = L.marker(
+                [43.601, 11.288],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_1f9caffbf4f43b95a057999c407e4f39 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d7023103435472c914be2a7f07be65b9 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_90e06ec3ad6c570568cf8a6faf65bd24 = $(`<div id="html_90e06ec3ad6c570568cf8a6faf65bd24" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Agriturismo San Martino</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.6 · 31 reviews · 2.8 km</div><div style="font-size:12px;margin-bottom:6px;">Via San Martino 6, 50022 Greve in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/san-martino" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0012</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0012 | IT DEMO 0012</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-08-21 · Demo user · 5/5\nagriturismo.it-only blue tier.</div></div></div>`)[0];
+                popup_d7023103435472c914be2a7f07be65b9.setContent(html_90e06ec3ad6c570568cf8a6faf65bd24);
+            
+        
+
+        marker_982e6a1aec210425af5479cfa405c92d.bindPopup(popup_d7023103435472c914be2a7f07be65b9)
+        ;
+
+        
+    
+    
+            marker_982e6a1aec210425af5479cfa405c92d.bindTooltip(
+                `<div>
+                     [DEMO] Agriturismo San Martino
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_982e6a1aec210425af5479cfa405c92d.setIcon(icon_1f9caffbf4f43b95a057999c407e4f39);
+            
+    
+            var marker_3c2fc77e96efe8fb57b2c12527622315 = L.marker(
+                [43.6305, 11.209],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_21ec68a15b1fe264546955c7cf78616f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d7688c783fa5f315ac8f1c3b435152a5 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_b8109f002a7ebc818c9af431eaaa436d = $(`<div id="html_b8109f002a7ebc818c9af431eaaa436d" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Le Colline d&#x27;Oro</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.9 · 67 reviews · 11.4 km</div><div style="font-size:12px;margin-bottom:6px;">Via delle Colline 14, 50020 San Casciano</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/colline" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0013</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0013</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-07-14 · Demo user · 5/5\nagriturismo.it-only green star example.</div></div></div>`)[0];
+                popup_d7688c783fa5f315ac8f1c3b435152a5.setContent(html_b8109f002a7ebc818c9af431eaaa436d);
+            
+        
+
+        marker_3c2fc77e96efe8fb57b2c12527622315.bindPopup(popup_d7688c783fa5f315ac8f1c3b435152a5)
+        ;
+
+        
+    
+    
+            marker_3c2fc77e96efe8fb57b2c12527622315.bindTooltip(
+                `<div>
+                     [DEMO] Le Colline d'Oro
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3c2fc77e96efe8fb57b2c12527622315.setIcon(icon_21ec68a15b1fe264546955c7cf78616f);
+            
+    
+            var marker_579d19cd011666bb76a5096056492741 = L.marker(
+                [43.464, 11.298],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_952cc0afee61035e954894ead3cb7fe6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bd2732a1cd4691bd6ceb1006db4170e2 = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_d01df50bdffe9eca793f4605e9e33f44 = $(`<div id="html_d01df50bdffe9eca793f4605e9e33f44" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Antico Casale</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.2 · 18 reviews · 13.9 km</div><div style="font-size:12px;margin-bottom:6px;">Via dell&#x27;Antico Casale 22, 53011 Castellina</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/casale" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0014</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0014</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-06-30 · Demo user · 4/5\nagriturismo.it below 4.4 — orange.</div></div></div>`)[0];
+                popup_bd2732a1cd4691bd6ceb1006db4170e2.setContent(html_d01df50bdffe9eca793f4605e9e33f44);
+            
+        
+
+        marker_579d19cd011666bb76a5096056492741.bindPopup(popup_bd2732a1cd4691bd6ceb1006db4170e2)
+        ;
+
+        
+    
+    
+            marker_579d19cd011666bb76a5096056492741.bindTooltip(
+                `<div>
+                     [DEMO] Antico Casale
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_579d19cd011666bb76a5096056492741.setIcon(icon_952cc0afee61035e954894ead3cb7fe6);
+            
+    
+            var marker_c0429e0a98d725d1ae2577e3f37df10c = L.marker(
+                [43.5835, 11.321],
+                {
+}
+            ).addTo(marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75);
+        
+    
+            var icon_d41bc3f5e0a792808a8116ab24ab52c6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_19198df86700dc8851861e463968f69a = L.popup({
+  "maxWidth": 380,
+});
+
+        
+            
+                var html_bcd1fada42abbf9b301b86e7253e95db = $(`<div id="html_bcd1fada42abbf9b301b86e7253e95db" style="width: 100.0%; height: 100.0%;"><div style="font-family:system-ui,sans-serif;"><div style="font-size:14px;font-weight:600;margin-bottom:4px;">[DEMO] Borgo Antico</div><div style="color:#555;font-size:12px;margin-bottom:6px;">★ 4.5 · 44 reviews · 0.6 km</div><div style="font-size:12px;margin-bottom:6px;">Via del Borgo 3, 50022 Greve in Chianti</div><div style="font-size:12px;margin-bottom:8px;"><a href="https://example.com/borgo" target="_blank" rel="noopener">Website</a> · 📞 +39 000 000 0015</div><div style="font-size:11px;color:#666;margin-bottom:6px;">License: CIS DEMO 0015</div><div style="font-size:10px;color:#888;margin-bottom:4px;">Source: agriturismo.it; google_places</div><div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px;font-size:11px;color:#333;">2025-05-21 · Demo user · 4/5\nStar icon mid-tier.</div></div></div>`)[0];
+                popup_19198df86700dc8851861e463968f69a.setContent(html_bcd1fada42abbf9b301b86e7253e95db);
+            
+        
+
+        marker_c0429e0a98d725d1ae2577e3f37df10c.bindPopup(popup_19198df86700dc8851861e463968f69a)
+        ;
+
+        
+    
+    
+            marker_c0429e0a98d725d1ae2577e3f37df10c.bindTooltip(
+                `<div>
+                     [DEMO] Borgo Antico
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c0429e0a98d725d1ae2577e3f37df10c.setIcon(icon_d41bc3f5e0a792808a8116ab24ab52c6);
+            
+    
+            marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75.addTo(map_69c24b86002ce7ca4c9177e8f3e2b434);
+        
+    
+            map_69c24b86002ce7ca4c9177e8f3e2b434.fitBounds(
+                [[43.458, 11.186], [43.678, 11.391]],
+                {"padding": [30, 30]}
+            );
+        
+    
+            var layer_control_d803fb93547f05768ac4cb475e746da3_layers = {
+                base_layers : {
+                    "Satellite" : tile_layer_18340d4af42954dec464e13a4e543488,
+                    "Street map" : tile_layer_eb5173ab57c674d912b1b661e8351b89,
+                },
+                overlays :  {
+                    "Place labels (over satellite)" : tile_layer_662171a50047589376fa6137374a7cfa,
+                    "Agriturismi" : marker_cluster_12b7d2d422751cc6b8be810b0ceb9e75,
+                },
+            };
+            let layer_control_d803fb93547f05768ac4cb475e746da3 = L.control.layers(
+                layer_control_d803fb93547f05768ac4cb475e746da3_layers.base_layers,
+                layer_control_d803fb93547f05768ac4cb475e746da3_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_69c24b86002ce7ca4c9177e8f3e2b434);
+
+        
+</script>
+</html>

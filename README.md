@@ -7,6 +7,10 @@ tuned for *agriturismi*, but the pipeline itself is category-agnostic —
 point it at wineries in Napa, specialty coffee in Berlin, refugi in the
 Pyrenees, or anything else Google Places indexes.
 
+**[Live demo map →](https://yu7321.github.io/places-finder/demo.html)** ·
+[Build story](./BLOG_POST.md) ·
+[Bundled example configs](./examples/)
+
 ## What it does
 
 1. **Discover** places around a location via multiple Google Places text
