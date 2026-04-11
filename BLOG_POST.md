@@ -97,9 +97,8 @@ operating for years and which has 20+ Google reviews on its own page. Google
 Places' search index has clear gaps, especially for places that don't pay to
 keep their listing high in the local pack.
 
-I went looking for a complementary source and landed on `agriturismo.it`,
-the canonical Italian property of the HomeToGo metasearch network. The
-listing pages are JavaScript-driven and the API endpoints are behind
+I went looking for a complementary source and landed on `agriturismo.it`.
+The listing pages are JavaScript-driven and the API endpoints are behind
 `robots.txt`'s `Disallow: /api/`, but the per-property detail pages are
 public, server-rendered, and indexed in a regular XML sitemap:
 
@@ -198,9 +197,9 @@ don't — keep separate, even though they're 60 m apart.
 This caught 14 cross-source duplicates, none false. The merge function then
 combines fields rather than picking a winner: phone comes from the
 agriturismo.it row (direct owner), website comes from the Google row (the
-real owner's site, not the metasearch link), reviews come from Google
-(agriturismo.it doesn't expose review bodies in the initial page load),
-license codes come from agriturismo.it. The merged row gets `source:
+real owner's site, not the agriturismo.it listing URL), reviews come from
+Google (agriturismo.it doesn't expose review bodies in the initial page
+load), license codes come from agriturismo.it. The merged row gets `source:
 "agriturismo.it; google_places"` so the merge is visible downstream.
 
 ## The map

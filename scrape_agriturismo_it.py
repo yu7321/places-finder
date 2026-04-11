@@ -81,11 +81,11 @@ def main() -> None:
 
     # The agriturismo.it detail page does not expose owner email; the existing
     # email scraper visits owner websites, but here `website` holds the
-    # agriturismo.it URL itself, so emails would be from the metasearch site
-    # rather than the owner. Skip by default.
+    # agriturismo.it listing URL itself, so emails scraped from it would be
+    # from agriturismo.it rather than the owner. Skip by default.
     if not args.skip_emails:
         # Only run on rows with a non-agriturismo.it website (none, today).
-        # Future: if a `provider` link to the owner ever lands in the JSON,
+        # Future: if a direct owner-website link ever lands in the JSON,
         # this can enrich those rows.
         external = [r for r in rows if r.website and "agriturismo.it" not in r.website]
         if external:

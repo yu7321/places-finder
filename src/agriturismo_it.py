@@ -1,10 +1,11 @@
-"""Scraper for agriturismo.it (HomeToGo metasearch, canonical Italian site).
+"""Scraper for www.agriturismo.it.
 
-Reads the sitemap, picks detail pages by region/province slug, and extracts
-the embedded `rentalOfferDetails` + `static-data-json` payloads from each
-page. Returns Place objects with source="agriturismo.it".
+Walks the site's public XML sitemap, picks detail pages by region/province
+slug, fetches each page, and extracts two JSON islands embedded in the HTML
+(`rentalOfferDetails` and `static-data-json`). Returns Place objects with
+source="agriturismo.it". No external API; no headless browser.
 
-The canonical site uses Italian region/province slugs in URLs, e.g.
+The site uses Italian region/province slugs in URLs, e.g.
 `/it/agriturismi/puglia/lecce/<Slug>-<id>/index.html`. Pass the Italian
 slugs to `scrape(region=..., province=...)`.
 """

@@ -20,10 +20,11 @@ Pyrenees, or anything else Google Places indexes.
 2. **Enrich** each place by following its website and scraping the
    contact/impressum page for an owner email address.
 3. **(Optional) Scrape a domain-specific source.** For the agriturismo
-   use case, there's a bundled scraper for `agriturismo.it` (HomeToGo
-   metasearch, canonical Italian site) that walks the public sitemap and
-   extracts direct owner phone numbers and Italian tourism license codes
-   from the embedded JSON.
+   use case, there's a bundled scraper for `www.agriturismo.it` that
+   walks the site's public XML sitemap, fetches each detail page, and
+   extracts the JSON island embedded in the HTML — direct owner phone
+   numbers and Italian tourism license codes that Google Places doesn't
+   surface.
 4. **Merge** multiple CSVs from different sources with two-tier
    coordinate-based deduplication: within 50 m always merges; 50–250 m
    merges only when names share a significant token. Field values are
@@ -38,8 +39,8 @@ Pyrenees, or anything else Google Places indexes.
 - Multi-query Google Places search with keyword filtering
 - Language-agnostic email scraper (follows typical contact/impressum paths
   in Italian, English, German, Spanish)
-- Domain-specific sitemap scraper for agriturismo.it as an opt-in second
-  source
+- Domain-specific sitemap scraper for `agriturismo.it` as an opt-in
+  second source
 - Two-tier coordinate + name dedup that collapses cross-source duplicates
   without merging genuinely different neighboring places
 - Folium-based HTML map with rating-by-color and source-by-icon encoding
@@ -209,7 +210,7 @@ only, star for places found in both.
     ├── discovery.py            # Google Places API client (generic)
     ├── email_scraper.py        # Website email scraping
     ├── csv_writer.py           # CSV output
-    └── agriturismo_it.py       # HomeToGo / agriturismo.it parser (domain-specific)
+    └── agriturismo_it.py       # agriturismo.it sitemap scraper (domain-specific)
 ```
 
 Modules labeled "generic" work for any category; modules labeled
@@ -235,7 +236,7 @@ MIT — see `LICENSE`.
 ## Acknowledgements
 
 - [Google Places API (New)](https://developers.google.com/maps/documentation/places/web-service/overview)
-- [HomeToGo / agriturismo.it](https://www.agriturismo.it/) for serving rich
+- [agriturismo.it](https://www.agriturismo.it/) for serving rich
   structured data on their public detail pages
 - [folium](https://python-visualization.github.io/folium/) and
   [Leaflet.js](https://leafletjs.com/) for the map rendering

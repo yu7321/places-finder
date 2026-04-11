@@ -90,7 +90,7 @@ def merge_pair(a: dict, b: dict) -> dict:
     else:
         out["phone"] = a_phone or b_phone
 
-    # Website: prefer a real owner site over the agriturismo.it metasearch link.
+    # Website: prefer the real owner site over the agriturismo.it listing URL.
     a_web, b_web = (a.get("website") or "").strip(), (b.get("website") or "").strip()
     if _is_real_website(a_web):
         out["website"] = a_web
