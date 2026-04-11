@@ -118,6 +118,37 @@ require_keywords:               # name/type allowlist to filter noise
 
 That's it. No code changes needed.
 
+### Pro tip: regional vocabulary
+
+The single biggest lever on result quality is the search-query list, and
+the biggest mistake is sticking to the literal English category name.
+Italian farm stays in particular almost never call themselves
+"agriturismo" on their sign — the displayed name is the historical
+building type:
+
+| Term | Region | Meaning |
+| --- | --- | --- |
+| `masseria` | Puglia, Basilicata, Sicily | Fortified farmhouse |
+| `casale` | Tuscany, Lazio, Marche | Rural homestead |
+| `podere` | Tuscany | Small farm |
+| `tenuta` | generic | Estate |
+| `borgo` | generic | Restored hamlet |
+| `baglio` | Sicily | Arabic-origin courtyard farmhouse |
+| `trullo` | Itria valley, Puglia | Cone-roofed rural building |
+| `fattoria` | generic | Farm |
+
+If you only search for `"agriturismo"` you'll miss most of the places
+you actually want. The shipped `config.example.yaml` includes standalone
+queries for each of these, plus the same terms in `require_keywords`
+so converted-farmhouse properties survive the filter even when Google
+tags them with the generic `lodging` type.
+
+The same logic applies to other categories. For wineries, search both
+`"winery"` and `"vineyard"` and `"tasting room"` and `"cellar door"` —
+each surfaces a different slice. For specialty coffee, search both
+`"third wave coffee"` and `"single origin"` and `"pour over"`. Cast a
+wide net at the query stage; let `require_keywords` do the filtering.
+
 ### (Optional) Scrape agriturismo.it
 
 Only relevant for the agriturismo use case. Hits the canonical Italian

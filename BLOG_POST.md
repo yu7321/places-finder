@@ -46,6 +46,28 @@ keyword filter I run after the search has to look at both the name and the
 type list, and accept any of `farmstay`, `agriturismo`, `agritourism`,
 `farm stay`, or `fattoria`.
 
+The bigger lesson, though, was about regional vocabulary. Italian farm
+stays almost never call themselves "agriturismo" on their sign — the
+displayed name is the historical building type. In Puglia (where I was
+actually going), the word is *masseria* — a fortified farmhouse, much
+more common than "agriturismo" as the leading noun. In Tuscany you want
+*casale* and *podere*. In Sicily, *baglio*. Sardinia has *stazzo*. The
+Itria valley has *trullo*, the cone-roofed rural buildings that ended up
+on every regional postcard. None of these get found by a query for
+`"agriturismo"`. They get found by queries for the building types
+themselves.
+
+The fix is to search standalone for each regional term — *masseria*,
+*casale*, *podere*, *tenuta*, *borgo*, *baglio*, *trullo* — and to add
+those tokens to the keyword allowlist so converted-farmhouse properties
+survive the post-filter even when Google tags them with the generic
+`lodging` type. Yes, this also lets through the luxury hotels in
+restored masserie (Masseria San Domenico, Borgo Egnazia, etc.), but
+those are usually exactly what you want for a farm-stay trip — they're
+the same buildings, just with better service and a bigger pool. The
+shipped config does both halves of this and the result for Lecce
+roughly tripled compared to a generic-only query set.
+
 I set the request `languageCode` to `it` so review text comes back in
 Italian where the original review was Italian, which keeps the "first 5
 reviews" the API returns more relevant for places in Italy.

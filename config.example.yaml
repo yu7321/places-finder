@@ -46,15 +46,42 @@ language_code: "it"
 
 # Text queries used to find places. Multiple queries help coverage because
 # Google Places doesn't always have a clean single category for what you
-# want — a mix of phrasings (and languages, when relevant) improves recall.
+# want — a mix of phrasings improves recall.
+#
+# REGIONAL VOCABULARY (the real value of this list):
+# Italian farm stays go by many local names depending on the region. If you
+# only search for "agriturismo" you'll miss most of the places you actually
+# want, because the displayed name is usually the historical building type:
+#
+#   masseria  → Puglia, Basilicata, Sicily (fortified farmhouse)
+#   casale    → Tuscany, Lazio, Marche (rural homestead)
+#   podere    → Tuscany (small farm)
+#   tenuta    → generic (estate)
+#   borgo     → restored hamlet, often converted to lodging
+#   baglio    → Sicily (Arabic-origin courtyard farmhouse)
+#   trullo    → Itria valley, Puglia (cone-roofed rural building)
+#   fattoria  → generic Italian farm
+#
+# Standalone queries for these terms cast a wider net than tying everything
+# to "agriturismo". The require_keywords filter below catches the real farm
+# stays among the results.
 search_queries:
+  # Generic
   - "agriturismo"
   - "agriturismo farm stay"
-  - "agriturismo bed and breakfast"
-  - "agriturismo con camere"
   - "agriturismo con piscina"
   - "azienda agricola agriturismo"
+  - "fattoria didattica"
+  - "country house Italy"
+  - "bio farm Italia"
+  # Regional building types — searched standalone
+  - "masseria"
   - "masseria agriturismo"
+  - "casale agriturismo"
+  - "podere agriturismo"
+  - "tenuta agriturismo"
+  - "borgo agriturismo"
+  - "trullo agriturismo"
 
 # Only keep results whose name or Google-assigned types contain one of these
 # tokens (case-insensitive). Filters out generic hotels that happen to match
@@ -63,12 +90,26 @@ search_queries:
 # Note: Google's official place type for Italian farm stays is "farmstay"
 # (one word, no space), so that token is the most reliable signal — many
 # real agriturismi don't have the word "agriturismo" in their displayed name.
+#
+# The regional building types below let masseria/casale/podere/etc.
+# properties survive the filter even when Google's type is just "lodging".
+# Trade-off: this also lets through luxury hotels in converted farmhouses
+# (Masseria San Domenico, Borgo Egnazia, etc.). For a Puglia farm-stay
+# trip that's usually a feature, not a bug — but if you want strictly
+# working farms, drop the building-type tokens.
 require_keywords:
   - "farmstay"
+  - "farm stay"
   - "agriturismo"
   - "agritourism"
-  - "farm stay"
   - "fattoria"
+  - "masseria"
+  - "casale"
+  - "podere"
+  - "tenuta"
+  - "borgo"
+  - "baglio"
+  - "trullo"
 
 # -----------------------------------------------------------------------------
 # Output settings
