@@ -20,9 +20,10 @@ Pyrenees, or anything else Google Places indexes.
 2. **Enrich** each place by following its website and scraping the
    contact/impressum page for an owner email address.
 3. **(Optional) Scrape a domain-specific source.** For the agriturismo
-   use case, there's a bundled scraper for `de.agriturismo.it` (HomeToGo
-   metasearch) that walks the public sitemap and extracts direct owner
-   phone numbers and Italian tourism license codes from the embedded JSON.
+   use case, there's a bundled scraper for `agriturismo.it` (HomeToGo
+   metasearch, canonical Italian site) that walks the public sitemap and
+   extracts direct owner phone numbers and Italian tourism license codes
+   from the embedded JSON.
 4. **Merge** multiple CSVs from different sources with two-tier
    coordinate-based deduplication: within 50 m always merges; 50–250 m
    merges only when names share a significant token. Field values are
@@ -117,12 +118,14 @@ require_keywords:               # name/type allowlist to filter noise
 
 That's it. No code changes needed.
 
-### (Optional) Scrape de.agriturismo.it
+### (Optional) Scrape agriturismo.it
 
-Only relevant for the agriturismo use case:
+Only relevant for the agriturismo use case. Hits the canonical Italian
+site (`www.agriturismo.it`) and accepts Italian region/province slugs:
 
 ```bash
-python scrape_agriturismo_it.py --region apulien --province lecce
+python scrape_agriturismo_it.py --region puglia --province lecce
+python scrape_agriturismo_it.py --region toscana --province siena
 ```
 
 Walks the public XML sitemap, filters detail URLs by region/province,
@@ -201,7 +204,7 @@ MIT — see `LICENSE`.
 ## Acknowledgements
 
 - [Google Places API (New)](https://developers.google.com/maps/documentation/places/web-service/overview)
-- [HomeToGo / agriturismo.it](https://de.agriturismo.it/) for serving rich
+- [HomeToGo / agriturismo.it](https://www.agriturismo.it/) for serving rich
   structured data on their public detail pages
 - [folium](https://python-visualization.github.io/folium/) and
   [Leaflet.js](https://leafletjs.com/) for the map rendering

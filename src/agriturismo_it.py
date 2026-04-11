@@ -1,8 +1,12 @@
-"""Scraper for de.agriturismo.it (HomeToGo metasearch).
+"""Scraper for agriturismo.it (HomeToGo metasearch, canonical Italian site).
 
 Reads the sitemap, picks detail pages by region/province slug, and extracts
 the embedded `rentalOfferDetails` + `static-data-json` payloads from each
 page. Returns Place objects with source="agriturismo.it".
+
+The canonical site uses Italian region/province slugs in URLs, e.g.
+`/it/agriturismi/puglia/lecce/<Slug>-<id>/index.html`. Pass the Italian
+slugs to `scrape(region=..., province=...)`.
 """
 
 import json
@@ -17,7 +21,7 @@ import requests
 from .models import Place
 
 
-SITEMAP_INDEX = "https://de.agriturismo.it/sitemap.xml"
+SITEMAP_INDEX = "https://www.agriturismo.it/sitemap.xml"
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -45,7 +49,7 @@ def _session() -> requests.Session:
     s.headers.update(
         {
             "User-Agent": USER_AGENT,
-            "Accept-Language": "de-DE,de;q=0.9,en;q=0.8",
+            "Accept-Language": "it-IT,it;q=0.9,en;q=0.8",
             "Accept": "text/html,application/xhtml+xml",
         }
     )
@@ -162,7 +166,7 @@ def parse_detail(html: str, url: str) -> Place | None:
 
 
 def scrape(
-    region: str = "apulien",
+    region: str = "puglia",
     province: str | None = "lecce",
     center: tuple[float, float] | None = None,
     radius_km: float | None = None,

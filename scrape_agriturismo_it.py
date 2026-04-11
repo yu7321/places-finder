@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """
-Scrape de.agriturismo.it for agriturismi in a region/province.
+Scrape agriturismo.it for agriturismi in a region/province.
+
+Uses the canonical Italian site (www.agriturismo.it), which serves Italian
+region and province slugs in its URLs (e.g. puglia/lecce, toscana/siena).
 
 Usage:
     python scrape_agriturismo_it.py
-    python scrape_agriturismo_it.py --region apulien --province lecce
+    python scrape_agriturismo_it.py --region puglia --province lecce
+    python scrape_agriturismo_it.py --region toscana --province siena
     python scrape_agriturismo_it.py --center 40.27,17.92 --radius 15
     python scrape_agriturismo_it.py --province lecce --center 40.27,17.92 --radius 15
 
@@ -33,11 +37,11 @@ def parse_center(s: str) -> tuple[float, float]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Scrape de.agriturismo.it")
-    parser.add_argument("--region", default="apulien",
-                        help="Region slug (default: apulien)")
+    parser = argparse.ArgumentParser(description="Scrape agriturismo.it")
+    parser.add_argument("--region", default="puglia",
+                        help="Italian region slug (default: puglia)")
     parser.add_argument("--province", default="lecce",
-                        help="Province slug, or empty string for whole region")
+                        help="Italian province slug, or empty string for whole region")
     parser.add_argument("--center", type=parse_center,
                         help="Optional 'lat,lng' for distance + radius filter")
     parser.add_argument("--radius", type=float,

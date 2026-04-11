@@ -75,22 +75,23 @@ operating for years and which has 20+ Google reviews on its own page. Google
 Places' search index has clear gaps, especially for places that don't pay to
 keep their listing high in the local pack.
 
-I went looking for a complementary source and landed on
-`de.agriturismo.it`, which is the German-language skin of the HomeToGo
-metasearch network. The listing pages are JavaScript-driven and the API
-endpoints are behind `robots.txt`'s `Disallow: /api/`, but the per-property
-detail pages are public, server-rendered, and indexed in a regular XML
-sitemap:
+I went looking for a complementary source and landed on `agriturismo.it`,
+the canonical Italian property of the HomeToGo metasearch network. The
+listing pages are JavaScript-driven and the API endpoints are behind
+`robots.txt`'s `Disallow: /api/`, but the per-property detail pages are
+public, server-rendered, and indexed in a regular XML sitemap:
 
 ```
-https://de.agriturismo.it/sitemap.xml
+https://www.agriturismo.it/sitemap.xml
   → /sitemap/details/details_0.xml
   → /sitemap/details/details_1.xml
+  → /sitemap/details/details_2.xml
 ```
 
-The two detail sitemaps together list 1,459 property URLs across all of
-Italy. Filtering by URL path to `/apulien/lecce/` gives 35 properties in the
-Lecce province — exactly the slice I wanted.
+The three detail sitemaps together list ~3,000 property URLs across Italy.
+Filtering by URL path to `/it/agriturismi/puglia/lecce/` gives 65 properties
+in the Lecce province — exactly the slice I wanted, and notably more than
+Google Places returned for the same area.
 
 The detail pages embed everything I need in two JSON islands:
 
@@ -136,15 +137,18 @@ def parse_detail(html: str, url: str) -> Agriturismo | None:
     )
 ```
 
-35 fetches, 0.7 seconds apart, all 35 properties parsed cleanly. 32 had a
-direct owner phone number. 35 had license codes. I went from one source with
-known gaps to two sources I could cross-reference.
+65 fetches, 0.7 seconds apart, all 65 properties parsed cleanly. 42 had a
+direct owner phone number. 65 had license codes. I went from one source
+with known gaps to two sources I could cross-reference — and the
+agriturismo.it slice for Lecce was nearly twice the size of what Google
+Places returned for the same area.
 
 ## The dedup problem
 
-Now I had 93 raw rows for Salento — 38 from the Adriatic coast Google search,
-20 from the Ionian coast Google search, 35 from agriturismo.it — and many of
-them were the same physical place under slightly different names. "MASSERIA
+Now I had 123 raw rows for Salento — 38 from the Adriatic coast Google
+search, 20 from the Ionian coast Google search, 65 from agriturismo.it —
+and many of them were the same physical place under slightly different
+names. "MASSERIA
 SALENTINA \"Costarella\"" on Google was the same business as "Masseria
 Salentina" on agriturismo.it. "Agriturismo biologico Fontanelle" was just
 "Fontanelle". I needed to detect and merge these without losing data from
@@ -169,7 +173,7 @@ stopwords (`agriturismo`, `masseria`, `tenuta`, `bio`, `country`, `hotel`,
 "Masseria Spartivento" reduce to `{turrita}` and `{spartivento}`, which
 don't — keep separate, even though they're 60 m apart.
 
-This caught 11 cross-source duplicates, none false. The merge function then
+This caught 14 cross-source duplicates, none false. The merge function then
 combines fields rather than picking a winner: phone comes from the
 agriturismo.it row (direct owner), website comes from the Google row (the
 real owner's site, not the metasearch link), reviews come from Google
@@ -204,15 +208,15 @@ A few small touches that make the map actually useful:
   clickable website + email + phone, license codes, source provenance, and
   the two newest reviews.
 
-The final map for Salento has 82 unique places: 47 from Google only, 24 from
-agriturismo.it only, and 11 corroborated by both. The 11 starred markers are
-the ones I trust most when picking where to actually book.
+The final map for Salento has 109 unique places: 44 from Google only, 51
+from agriturismo.it only, and 14 corroborated by both. The 14 starred
+markers are the ones I trust most when picking where to actually book.
 
 ## What I'd do differently
 
 1. **The agriturismo.it sitemap is the right entry point**, not the
    browseable region pages. I burned half an hour trying to scrape the
-   `/bauernhof/apulien/lecce/` listing page before realizing it's only
+   `/it/agriturismi/puglia/lecce/` listing page before realizing it's only
    ~10 editorial cards and the real inventory lives in the sitemap.
 2. **Field-level merge beats picking a winner.** My first attempt at dedup
    used a `score_row` heuristic to keep "the better" duplicate and threw
