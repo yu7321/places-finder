@@ -4,6 +4,10 @@ from dataclasses import dataclass, field
 from typing import List
 
 
+SOURCE_GOOGLE_PLACES = "google_places"
+SOURCE_AGRITURISMO_IT = "agriturismo.it"
+
+
 @dataclass
 class Review:
     author: str = ""
@@ -43,7 +47,7 @@ class Place:
     rating: float = 0.0
     user_rating_count: int = 0
     reviews: List[Review] = field(default_factory=list)
-    source: str = "google_places"
+    source: str = SOURCE_GOOGLE_PLACES
     license_codes: str = ""
 
     def reviews_joined(self, max_reviews: int = 5) -> str:

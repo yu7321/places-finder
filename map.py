@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Render agriturismi CSVs as a self-contained interactive HTML map.
+Render places CSVs as a self-contained interactive HTML map.
 
 Usage:
     python map.py merged_20260410-071233.csv
-    python map.py "agriturismi_*.csv"
+    python map.py "places_*.csv"
     python map.py file1.csv file2.csv --output map.html
 
 Open the resulting HTML in any browser. No API key needed at view time.
@@ -24,6 +24,8 @@ try:
 except ImportError:
     print("Error: folium is not installed. Run: pip install -r requirements.txt")
     sys.exit(1)
+
+from src.models import SOURCE_AGRITURISMO_IT, SOURCE_GOOGLE_PLACES
 
 
 def collect_rows(paths: list[str]) -> tuple[list[dict], int]:
@@ -74,9 +76,9 @@ def color_for_rating(rating_str: str) -> str:
 
 def icon_for_source(source: str) -> str:
     """leaf = Google Places only, home = agriturismo.it only, star = both."""
-    parts = {s.strip() for s in (source or "google_places").split(";") if s.strip()}
-    has_g = "google_places" in parts
-    has_a = "agriturismo.it" in parts
+    parts = {s.strip() for s in (source or SOURCE_GOOGLE_PLACES).split(";") if s.strip()}
+    has_g = SOURCE_GOOGLE_PLACES in parts
+    has_a = SOURCE_AGRITURISMO_IT in parts
     if has_g and has_a:
         return "star"
     if has_a:
@@ -102,7 +104,7 @@ def build_popup_html(row: dict) -> str:
     phone = (row.get("phone") or "").strip()
     gmaps = (row.get("google_maps_url") or "").strip()
     reviews_blob = row.get("reviews") or ""
-    source = (row.get("source") or "google_places").strip()
+    source = (row.get("source") or SOURCE_GOOGLE_PLACES).strip()
     licenses = (row.get("license_codes") or "").strip()
 
     parts: list[str] = [f'<div style="font-family:system-ui,sans-serif;">']
@@ -155,7 +157,6 @@ def build_popup_html(row: dict) -> str:
     )
 
     if reviews_blob:
-        # The CSV stores reviews separated by blank lines (`\n\n`).
         chunks = [c.strip() for c in reviews_blob.split("\n\n") if c.strip()]
         for chunk in chunks[:2]:
             parts.append(
@@ -194,8 +195,6 @@ def build_map(rows: list[dict]) -> folium.Map:
     lngs = [r["_lng"] for r in rows]
     center = [sum(lats) / len(lats), sum(lngs) / len(lngs)]
 
-    # Build with no default tile layer; we add two base layers below so the
-    # user can toggle between satellite and street view via LayerControl.
     # OSM's volunteer tile servers are avoided because they require a Referer
     # header, which is missing when the HTML is opened directly from disk.
     m = folium.Map(location=center, zoom_start=11, tiles=None)
@@ -208,9 +207,6 @@ def build_map(rows: list[dict]) -> folium.Map:
         control=True,
         max_zoom=19,
     ).add_to(m)
-    # Place labels overlay (roads + city names) on top of the satellite imagery
-    # so the user can still orient themselves geographically. It's a separate
-    # transparent overlay that the user can toggle off.
     folium.TileLayer(
         tiles="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
         attr="Esri",
@@ -226,7 +222,7 @@ def build_map(rows: list[dict]) -> folium.Map:
         control=True,
     ).add_to(m)
 
-    cluster = MarkerCluster(name="Agriturismi").add_to(m)
+    cluster = MarkerCluster(name="Places").add_to(m)
 
     for row in rows:
         color = color_for_rating(row.get("rating", ""))
@@ -249,7 +245,7 @@ def build_map(rows: list[dict]) -> folium.Map:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render agriturismi CSVs as an HTML map.")
+    parser = argparse.ArgumentParser(description="Render places CSVs as an HTML map.")
     parser.add_argument("inputs", nargs="+", help="CSV file paths or glob patterns")
     parser.add_argument(
         "--output",
@@ -278,13 +274,10 @@ def main() -> None:
     rows, skipped = collect_rows(paths)
 
     if skipped:
-        print(
-            f"\nSkipped {skipped} row(s) without lat/lng "
-            "(CSVs from before the schema change)."
-        )
+        print(f"\nSkipped {skipped} row(s) without lat/lng.")
 
     if not rows:
-        print("\nNo plottable rows. Re-run main.py to generate CSVs with coordinates.")
+        print("\nNo plottable rows.")
         sys.exit(1)
 
     output = args.output or f"map_{datetime.now().strftime('%Y%m%d-%H%M%S')}.html"

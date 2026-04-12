@@ -4,12 +4,12 @@ Category-agnostic. The category is defined by `search_queries` and
 `require_keywords` in the config (see `config.example.yaml`).
 """
 
-import math
 import time
 from typing import Any, Generator
 
 import requests
 
+from .geo import haversine_km
 from .models import Place, Review
 
 
@@ -101,17 +101,7 @@ class PlaceDiscovery:
         )
 
     def _distance_km(self, lat: float, lng: float) -> float:
-        R = 6371.0
-        lat1 = math.radians(self.base_lat)
-        lat2 = math.radians(lat)
-        dlat = math.radians(lat - self.base_lat)
-        dlng = math.radians(lng - self.base_lng)
-        a = (
-            math.sin(dlat / 2) ** 2
-            + math.cos(lat1) * math.cos(lat2) * math.sin(dlng / 2) ** 2
-        )
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        return round(R * c, 2)
+        return round(haversine_km(self.base_lat, self.base_lng, lat, lng), 2)
 
     def _matches_keyword(self, name: str, types: list[str]) -> bool:
         if not self.require_keywords:

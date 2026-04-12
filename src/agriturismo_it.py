@@ -11,7 +11,6 @@ slugs to `scrape(region=..., province=...)`.
 """
 
 import json
-import math
 import re
 import time
 from typing import Generator
@@ -19,7 +18,8 @@ from urllib.parse import urlparse
 
 import requests
 
-from .models import Place
+from .geo import haversine_km
+from .models import Place, SOURCE_AGRITURISMO_IT
 
 
 SITEMAP_INDEX = "https://www.agriturismo.it/sitemap.xml"
@@ -59,16 +59,23 @@ def _session() -> requests.Session:
 
 def fetch_detail_urls(session: requests.Session) -> list[str]:
     """Fetch sitemap index, then every detail sitemap, return all detail URLs."""
-    resp = session.get(SITEMAP_INDEX, timeout=20)
-    resp.raise_for_status()
-    sitemaps = [
-        u for u in LOC_RE.findall(resp.text) if "/sitemap/details/" in u
-    ]
-    urls: list[str] = []
-    for sm in sitemaps:
-        r = session.get(sm, timeout=20)
-        r.raise_for_status()
-        urls.extend(LOC_RE.findall(r.text))
+    try:
+        resp = session.get(SITEMAP_INDEX, timeout=20)
+        resp.raise_for_status()
+        sitemaps = [
+            u for u in LOC_RE.findall(resp.text) if "/sitemap/details/" in u
+        ]
+        if not sitemaps:
+            raise AgriturismoItError(
+                f"sitemap index at {SITEMAP_INDEX} contained no detail sitemaps"
+            )
+        urls: list[str] = []
+        for sm in sitemaps:
+            r = session.get(sm, timeout=20)
+            r.raise_for_status()
+            urls.extend(LOC_RE.findall(r.text))
+    except requests.RequestException as e:
+        raise AgriturismoItError(f"failed to fetch sitemap: {e}") from e
     return urls
 
 
@@ -78,16 +85,6 @@ def filter_by_path(urls: list[str], region: str, province: str | None) -> list[s
     if province:
         needle = f"/{region}/{province}/"
     return [u for u in urls if needle in urlparse(u).path]
-
-
-def haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
-    R = 6371.0
-    p1 = math.radians(lat1)
-    p2 = math.radians(lat2)
-    dp = math.radians(lat2 - lat1)
-    dl = math.radians(lng2 - lng1)
-    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
-    return round(R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a)), 2)
 
 
 def parse_detail(html: str, url: str) -> Place | None:
@@ -146,7 +143,7 @@ def parse_detail(html: str, url: str) -> Place | None:
             licenses.append(label)
     license_codes = " | ".join(licenses)
 
-    place_id = f"agriturismo.it:{rtk.get('rentalObjectId') or static.get('objectId') or url}"
+    place_id = f"{SOURCE_AGRITURISMO_IT}:{rtk.get('rentalObjectId') or static.get('objectId') or url}"
 
     return Place(
         place_id=place_id,
@@ -161,7 +158,7 @@ def parse_detail(html: str, url: str) -> Place | None:
         rating=rating,
         user_rating_count=review_count,
         reviews=[],
-        source="agriturismo.it",
+        source=SOURCE_AGRITURISMO_IT,
         license_codes=license_codes,
     )
 
@@ -206,7 +203,9 @@ def scrape(
             continue
 
         if center is not None:
-            a.distance_km = haversine_km(center[0], center[1], a.latitude, a.longitude)
+            a.distance_km = round(
+                haversine_km(center[0], center[1], a.latitude, a.longitude), 2
+            )
             if radius_km is not None and a.distance_km > radius_km:
                 time.sleep(delay)
                 continue

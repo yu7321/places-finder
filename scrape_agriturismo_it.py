@@ -23,7 +23,7 @@ from datetime import datetime
 from src.agriturismo_it import scrape, AgriturismoItError
 from src.csv_writer import write_csv
 from src.email_scraper import EmailScraper
-from src.models import Place
+from src.models import Place, SOURCE_AGRITURISMO_IT
 
 
 def parse_center(s: str) -> tuple[float, float]:
@@ -79,15 +79,11 @@ def main() -> None:
 
     print(f"\nParsed {len(rows)} place(s).")
 
-    # The agriturismo.it detail page does not expose owner email; the existing
-    # email scraper visits owner websites, but here `website` holds the
-    # agriturismo.it listing URL itself, so emails scraped from it would be
-    # from agriturismo.it rather than the owner. Skip by default.
+    # Detail pages don't expose owner email; the `website` field holds the
+    # agriturismo.it listing URL itself, so the email scraper would only find
+    # agriturismo.it's own addresses. Skip unless an external owner site shows up.
     if not args.skip_emails:
-        # Only run on rows with a non-agriturismo.it website (none, today).
-        # Future: if a direct owner-website link ever lands in the JSON,
-        # this can enrich those rows.
-        external = [r for r in rows if r.website and "agriturismo.it" not in r.website]
+        external = [r for r in rows if r.website and SOURCE_AGRITURISMO_IT not in r.website]
         if external:
             print(f"Scraping {len(external)} external website(s) for emails...")
             EmailScraper().enrich(external)

@@ -1,28 +1,30 @@
 #!/usr/bin/env python3
 """
-Merge multiple agriturismi CSV files into one, deduplicated by place_id and
-then by coordinate proximity (with name-overlap as a tiebreaker).
+Merge multiple places CSV files into one, deduplicated by place_id and then
+by coordinate proximity (with name-overlap as a tiebreaker).
 
 Usage:
     python merge.py file1.csv file2.csv [...] [--output merged.csv]
-    python merge.py "agriturismi_*.csv" --output merged.csv
+    python merge.py "places_*.csv" --output merged.csv
 """
 
 import argparse
 import csv
 import glob
-import math
 import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
-from src.models import CSV_COLUMNS
+from src.geo import haversine_km
+from src.models import CSV_COLUMNS, SOURCE_AGRITURISMO_IT, SOURCE_GOOGLE_PLACES
 
 
 # Distance thresholds for the coordinate-based dedup pass.
 CLOSE_M = 50      # below this, merge regardless of name
 FUZZY_M = 250     # below this, merge only if names share a significant token
+CLOSE_KM = CLOSE_M / 1000.0
+FUZZY_KM = FUZZY_M / 1000.0
 
 NAME_STOPWORDS = {
     "agriturismo", "agriturismi", "masseria", "tenuta", "podere",
@@ -30,16 +32,6 @@ NAME_STOPWORDS = {
     "hotel", "camping", "resort", "the", "and", "con", "del", "della",
     "delle", "dei", "il", "la", "le", "lo", "di", "da", "in",
 }
-
-
-def haversine_m(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
-    R = 6_371_000.0
-    p1 = math.radians(lat1)
-    p2 = math.radians(lat2)
-    dp = math.radians(lat2 - lat1)
-    dl = math.radians(lng2 - lng1)
-    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
-    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
 
 def name_tokens(name: str) -> set[str]:
@@ -63,12 +55,12 @@ def _row_lat_lng(row: dict) -> tuple[float, float] | None:
 
 
 def _row_sources(row: dict) -> set[str]:
-    raw = row.get("source") or "google_places"
+    raw = row.get("source") or SOURCE_GOOGLE_PLACES
     return {s.strip() for s in raw.split(";") if s.strip()}
 
 
 def _is_real_website(w: str) -> bool:
-    return bool(w) and "agriturismo.it" not in w
+    return bool(w) and SOURCE_AGRITURISMO_IT not in w
 
 
 def merge_pair(a: dict, b: dict) -> dict:
@@ -76,21 +68,20 @@ def merge_pair(a: dict, b: dict) -> dict:
     best value field-by-field rather than dropping one row's data."""
     out = dict(a)
 
-    # Longest descriptive name wins.
     out["name"] = max((a.get("name") or "", b.get("name") or ""), key=len)
 
-    # Phone: prefer the row sourced from agriturismo.it (direct owner phone),
-    # fall back to whichever is non-empty.
+    # Prefer agriturismo.it for phone — it's the direct owner mobile, while
+    # Google's number is routed through a proxy.
     a_src, b_src = _row_sources(a), _row_sources(b)
     a_phone, b_phone = (a.get("phone") or "").strip(), (b.get("phone") or "").strip()
-    if "agriturismo.it" in a_src and a_phone:
+    if SOURCE_AGRITURISMO_IT in a_src and a_phone:
         out["phone"] = a_phone
-    elif "agriturismo.it" in b_src and b_phone:
+    elif SOURCE_AGRITURISMO_IT in b_src and b_phone:
         out["phone"] = b_phone
     else:
         out["phone"] = a_phone or b_phone
 
-    # Website: prefer the real owner site over the agriturismo.it listing URL.
+    # Prefer the real owner site over the agriturismo.it listing URL.
     a_web, b_web = (a.get("website") or "").strip(), (b.get("website") or "").strip()
     if _is_real_website(a_web):
         out["website"] = a_web
@@ -99,16 +90,13 @@ def merge_pair(a: dict, b: dict) -> dict:
     else:
         out["website"] = a_web or b_web
 
-    # Simple non-empty wins (a takes precedence).
     for f in ("email", "google_maps_url", "license_codes", "reviews"):
         out[f] = (a.get(f) or "") or (b.get(f) or "")
 
-    # Address: longer wins.
     out["address"] = max(
         (a.get("address") or "", b.get("address") or ""), key=len
     )
 
-    # Rating: prefer the row with more reviews; user_rating_count = max.
     try:
         a_count = int(a.get("user_rating_count") or 0)
     except (TypeError, ValueError):
@@ -123,10 +111,8 @@ def merge_pair(a: dict, b: dict) -> dict:
         out["rating"] = a.get("rating") or ""
     out["user_rating_count"] = str(max(a_count, b_count)) if max(a_count, b_count) else ""
 
-    # Combined source list, sorted for stability.
     out["source"] = "; ".join(sorted(a_src | b_src))
 
-    # Combined place_id list (pipe-separated), so future merges still match.
     pids: set[str] = set()
     for r in (a, b):
         for p in (r.get("place_id") or "").split("|"):
@@ -135,7 +121,6 @@ def merge_pair(a: dict, b: dict) -> dict:
                 pids.add(p)
     out["place_id"] = "|".join(sorted(pids))
 
-    # File-provenance set (used to populate the `sources` column).
     out["_files"] = a.get("_files", set()) | b.get("_files", set())
 
     return out
@@ -158,10 +143,10 @@ def coord_dedup(rows: list[dict]) -> tuple[list[dict], int]:
             ex_coords = _row_lat_lng(existing)
             if ex_coords is None:
                 continue
-            d = haversine_m(lat, lng, ex_coords[0], ex_coords[1])
-            if d > FUZZY_M:
+            d = haversine_km(lat, lng, ex_coords[0], ex_coords[1])
+            if d > FUZZY_KM:
                 continue
-            if d <= CLOSE_M or names_overlap(row.get("name", ""), existing.get("name", "")):
+            if d <= CLOSE_KM or names_overlap(row.get("name", ""), existing.get("name", "")):
                 out[i] = merge_pair(existing, row)
                 absorbed = True
                 merges += 1
@@ -179,7 +164,7 @@ def merge_csvs(paths: list[str], output: str) -> tuple[int, int, int]:
             for row in csv.DictReader(f):
                 row["_files"] = {src}
                 if not row.get("source"):
-                    row["source"] = "google_places"
+                    row["source"] = SOURCE_GOOGLE_PLACES
                 all_rows.append(row)
     total = len(all_rows)
 
@@ -216,7 +201,7 @@ def merge_csvs(paths: list[str], output: str) -> tuple[int, int, int]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Merge agriturismi CSV files.")
+    parser = argparse.ArgumentParser(description="Merge places CSV files.")
     parser.add_argument("inputs", nargs="+", help="CSV file paths or glob patterns")
     parser.add_argument(
         "--output",

@@ -105,12 +105,7 @@ def main() -> None:
 
     try:
         results: list[Place] = []
-        seen: set[str] = set()
         for a in discovery.discover():
-            key = a.place_id or f"{a.name}|{a.address}"
-            if key in seen:
-                continue
-            seen.add(key)
             results.append(a)
             print(
                 f"  + {a.name} ({a.distance_km} km)"
